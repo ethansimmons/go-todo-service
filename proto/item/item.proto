@@ -1,0 +1,46 @@
+// ./proto/item/item.proto
+
+syntax = "proto3";
+option go_package = "simmons/todo_service/protogen/golang/items";
+
+import "google/api/annotations.proto";
+//import "google/api/http.proto";
+import "google/type/date.proto";
+
+enum TodoState {
+  UNKNOWN = 0;
+  UNFINISHED = 1;
+  FINISHED = 2;
+}
+
+message Item {
+  uint64 item_id = 1 [ json_name = "item_id" ];
+  string item_name = 2 [ json_name = "item_title" ];
+  string item_description = 3 [ json_name = "item_desc" ];
+  TodoState item_state = 4 [ json_name = "item_state" ];
+  google.type.Date created_date = 5 [ json_name = "created_date" ];
+}
+
+message Empty {}
+
+message PayloadWithSingleItem {
+  Item item = 1;
+}
+
+message PayloadWithItems {
+  repeated Item items = 1;
+}
+
+service Items {
+  rpc AddItem(PayloadWithSingleItem) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v0/items",
+      body: "*"
+    };
+  }
+  rpc GetItems(Empty) returns (PayloadWithItems) {
+    option (google.api.http) = {
+      get: "/v0/items",
+    };
+  }
+}
