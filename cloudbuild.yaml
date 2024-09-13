@@ -8,6 +8,6 @@ steps:
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', 'todoservice', '--image', 'gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service', '--region', 'SERVICE_REGION']
+    args: ['run', 'deploy', 'item-service', '--image', 'gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service', '--region', 'us-central1']
 images:
   - gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service
