@@ -1,5 +1,4 @@
 # docker-compose.yaml
-version: '3.8'
 services:
   item-service:
     image: item-service
@@ -8,7 +7,7 @@ services:
       dockerfile: Dockerfile
       target: item-service
     ports:
-      - '50051/tcp'
+      - '443/tcp'
     deploy:
       resources:
         limits:
@@ -21,7 +20,7 @@ services:
       dockerfile: Dockerfile
       target: gateway-service
       args:
-        ITEM_SERVICE_ADDRESS: item-service:50051
+        ITEM_SERVICE_ADDRESS: item-service:443
     ports:
       - '8080:8080'
     deploy:

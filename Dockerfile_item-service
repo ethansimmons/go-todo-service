@@ -6,7 +6,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 COPY . ./
 RUN go mod tidy
-
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./item-service ./cmd/server/main.go
 
 FROM alpine:latest AS item-service
@@ -17,4 +16,3 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 COPY --from=builder /app/item-service .
 EXPOSE 443
 ENTRYPOINT ["./item-service"]
-

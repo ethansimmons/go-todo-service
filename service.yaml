@@ -1,0 +1,46 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+    run.googleapis.com/urls: '["https://item-service-547344614667.us-central1.run.app","https://item-service-4xswidmkgq-uc.a.run.app"]'
+  labels:
+    cloud.googleapis.com/location: us-central1
+  name: item-service
+  namespace: '547344614667'
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '1'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 492.0.0
+        run.googleapis.com/startup-cpu-boost: 'true'
+      labels:
+        client.knative.dev/nonce: ggmvvaxvgy
+        run.googleapis.com/startupProbeType: Default
+    spec:
+      containerConcurrency: 80
+      containers:
+        - image: us-central1-docker.pkg.dev/chromatic-theme-320615/cloud-run-built-image/item-service
+
+          name: item-service-1
+          ports:
+            - containerPort: 443
+              name: h2c
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          startupProbe:
+            failureThreshold: 1
+            periodSeconds: 240
+            tcpSocket:
+              port: 443
+            timeoutSeconds: 240
+      serviceAccountName: 547344614667-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+    - latestRevision: true
+      percent: 100

@@ -3,22 +3,22 @@ package internal
 
 import (
 	"fmt"
-	"simmons/todo_service/protogen/golang/item"
+	"simmons/todo_service/proto/item"
 )
 
 type DB struct {
-	collection []*items.Item
+	collection []*item.Item
 }
 
 // NewDB creates a new array to mimic the behaviour of a in-memory database
 func NewDB() *DB {
 	return &DB{
-		collection: make([]*items.Item, 0),
+		collection: make([]*item.Item, 0),
 	}
 }
 
 // AddItem adds a new item to the DB collection. Returns an error on duplicate ids
-func (d *DB) AddItem(item *items.Item) error {
+func (d *DB) AddItem(item *item.Item) error {
 	for _, i := range d.collection {
 		if i.ItemId == item.ItemId {
 			return fmt.Errorf("duplicate item id: %d", item.GetItemId())
@@ -28,6 +28,6 @@ func (d *DB) AddItem(item *items.Item) error {
 	return nil
 }
 
-func (d *DB) GetItems() ([]*items.Item, error) {
+func (d *DB) GetItems() ([]*item.Item, error) {
 	return d.collection, nil
 }

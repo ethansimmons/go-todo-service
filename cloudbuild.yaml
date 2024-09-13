@@ -1,0 +1,13 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build','--target', 'item-service', '-t', 'gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service', '.']
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'todoservice', '--image', 'gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service', '--region', 'SERVICE_REGION']
+images:
+  - gcr.io/chromatic-theme-320615/cloud-run-built-image/item-service

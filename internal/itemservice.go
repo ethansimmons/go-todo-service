@@ -4,7 +4,7 @@ package internal
 import (
 	"context"
 	"log"
-	"simmons/todo_service/protogen/golang/item"
+	"simmons/todo_service/proto/item"
 )
 
 // ItemService should implement the ItemsServer interface generated from grpc.
@@ -12,7 +12,7 @@ import (
 // UnimplementedItemsServer must be embedded to have forwarded compatible implementations.
 type ItemService struct {
 	db *DB
-	items.UnimplementedItemsServer
+	item.UnimplementedItemsServer
 }
 
 // NewItemService creates a new Item
@@ -21,18 +21,18 @@ func NewItemService(db *DB) ItemService {
 }
 
 // AddItem implements the AddItem method of the grpc ItemService interface to add a new item
-func (o *ItemService) AddItem(_ context.Context, req *items.PayloadWithSingleItem) (*items.Empty, error) {
+func (o *ItemService) AddItem(_ context.Context, req *item.PayloadWithSingleItem) (*item.Empty, error) {
 	log.Printf("Received an add-item request")
 	err := o.db.AddItem(req.GetItem())
-	return &items.Empty{}, err
+	return &item.Empty{}, err
 }
 
 // GetItems implements the GetItems method of the grpc ItemService interface to add a new item
-func (o *ItemService) GetItems(_ context.Context, _ *items.Empty) (*items.PayloadWithItems, error) {
+func (o *ItemService) GetItems(_ context.Context, _ *item.Empty) (*item.PayloadWithItems, error) {
 	log.Printf("Received an get-items request")
 	elems, err := o.db.GetItems()
 
-	response := &items.PayloadWithItems{}
+	response := &item.PayloadWithItems{}
 
 	response.Items = elems
 

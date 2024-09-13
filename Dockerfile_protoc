@@ -1,0 +1,39 @@
+FROM namely/protoc-all as protoc
+COPY ./proto proto/
+# Generate gRPC code
+RUN protoc --proto_path=proto --go_out=protogen/golang --go_opt=paths=source_relative \
+    --go-grpc_out=protogen/golang --go-grpc_opt=paths=source_relative \
+    proto/item/item.proto
+
+FROM golang:1.23 AS builder
+ARG ITEM_SERVICE_ADDRESS
+# Install git and ca-certificates (needed to be able to call HTTPS)
+# Install protoc
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    git
+WORKDIR /app
+COPY . ./
+COPY --from=protoc proto/protogen/ protogen
+RUN go mod tidy
+RUN CGO_ENABLED=0 GOOS=linux go build -o ./item-service ./cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.itemServiceAddr=$ITEM_SERVICE_ADDRESS" -o ./gateway-service ./cmd/client/main.go
+
+FROM alpine:latest AS item-service
+WORKDIR /app
+# Copy certificates
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+# Copy app binary
+COPY --from=builder /app/item-service .
+EXPOSE 443
+ENTRYPOINT ["./item-service"]
+
+FROM alpine:latest AS gateway-service
+WORKDIR /app
+# Copy certificates
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+# Copy app binary
+COPY --from=builder /app/gateway-service .
+EXPOSE 8080
+ENTRYPOINT ["./gateway-service"]
+

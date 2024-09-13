@@ -8,7 +8,7 @@ import (
 	"net"
 	"os"
 	"simmons/todo_service/internal"
-	items "simmons/todo_service/protogen/golang/item"
+	pb "simmons/todo_service/proto/item"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "50051"
+		port = "443"
 		log.Printf("Defaulting to port %s", port)
 	}
 
@@ -34,7 +34,7 @@ func main() {
 	itemService := internal.NewItemService(db)
 
 	// register the item service with the grpc server
-	items.RegisterItemsServer(server, &itemService)
+	pb.RegisterItemsServer(server, &itemService)
 
 	// register reflection service on grpc server
 	reflection.Register(server)

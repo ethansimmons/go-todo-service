@@ -1,10 +1,10 @@
 // ./proto/item/item.proto
 
 syntax = "proto3";
-option go_package = "simmons/todo_service/protogen/golang/items";
+package simmons.todo.proto.item;
+option go_package = "simmons/todo_service/protogen/golang/item";
 
 import "google/api/annotations.proto";
-//import "google/api/http.proto";
 import "google/type/date.proto";
 
 enum TodoState {
